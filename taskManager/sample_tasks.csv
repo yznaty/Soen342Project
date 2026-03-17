@@ -1,0 +1,11 @@
+TaskName,Description,Subtask,Status,Priority,DueDate,ProjectName,ProjectDescription,Collaborator,CollaboratorCategory
+Write Q1 Report,Quarterly academic report,,OPEN,HIGH,2026-03-20,Course Assignments,University coursework,,
+Write Q1 Report,Quarterly academic report,Draft introduction,OPEN,HIGH,2026-03-20,Course Assignments,University coursework,Alice,JUNIOR
+Write Q1 Report,Quarterly academic report,Add references,OPEN,HIGH,2026-03-20,Course Assignments,University coursework,Bob,INTERMEDIATE
+Submit Assignment 2,Data structures assignment,,OPEN,HIGH,2026-03-25,Course Assignments,University coursework,,
+Fix login bug,Users cannot login with special chars,,COMPLETED,HIGH,2026-03-15,Home Webapp,Personal web project,,
+Add dark mode,Implement dark/light theme toggle,,OPEN,MEDIUM,2026-04-10,Home Webapp,Personal web project,Carol,JUNIOR
+Buy renovation tiles,Purchase floor tiles,,OPEN,LOW,2026-04-01,Home Renovation,Renovate the bathroom,,
+Call plumber,Schedule plumber,,OPEN,MEDIUM,2026-03-18,Home Renovation,Renovate the bathroom,,
+Grocery shopping,Buy weekly groceries,,OPEN,LOW,2026-03-16,,,,
+Plan birthday party,Organize surprise birthday for mom,,OPEN,HIGH,2026-04-05,,,,
