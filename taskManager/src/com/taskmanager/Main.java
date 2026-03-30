@@ -45,6 +45,10 @@ public class Main {
                 viewActivityHistory();
             } else if (choice.equals("0")) {
                 running = false;
+            } else if (choice.equals("13")) {
+                exportICal();
+            } else if (choice.equals("14")) {
+                listOverloadedCollaborators();
             } else {
                 System.out.println("Invalid choice, try again.");
             }
@@ -67,8 +71,12 @@ public class Main {
         System.out.println("10. Export to CSV");
         System.out.println("11. View All Projects");
         System.out.println("12. View Task Activity History");
+        System.out.println("13. Export to iCalendar (.ics)");
+        System.out.println("14. List Overloaded Collaborators");
         System.out.println("0.  Exit");
         System.out.print("Choice: ");
+        
+
     }
 
     // -------------------------------------------------------------------------
@@ -531,6 +539,67 @@ public class Main {
             return Integer.parseInt(scanner.nextLine().trim());
         } catch (Exception e) {
             return defaultVal;
+        }
+    }
+    static void exportICal() {
+        System.out.println("\n-- Export to iCalendar --");
+        System.out.println("1. Export a single task");
+        System.out.println("2. Export all tasks in a project");
+        System.out.println("3. Export open tasks due this week");
+        System.out.print("Choice: ");
+        String sub = scanner.nextLine().trim();
+
+        System.out.print("Output file [export.ics]: ");
+        String path = scanner.nextLine().trim();
+        if (path.isEmpty()) path = "export.ics";
+
+        try {
+            if (sub.equals("1")) {
+                Task task = pickTask();
+                if (task == null) return;
+                if (task.getDueDate() == null) {
+                    System.out.println("This task has no due date and cannot be exported.");
+                    return;
+                }
+                manager.exportTaskToICal(task, path);
+                System.out.println("Task exported to " + path);
+
+            } else if (sub.equals("2")) {
+                Project project = pickProject();
+                if (project == null) return;
+                manager.exportProjectToICal(project, path);
+                System.out.println("Project \"" + project.getName() + "\" exported to " + path);
+
+            } else if (sub.equals("3")) {
+                ArrayList<Task> weekly = manager.getOpenTasksDueThisWeek();
+                if (weekly.isEmpty()) {
+                    System.out.println("No open tasks with a due date this week.");
+                    return;
+                }
+                manager.exportFilteredToICal(weekly, path);
+                System.out.println(weekly.size() + " task(s) due this week exported to " + path);
+
+            } else {
+                System.out.println("Invalid choice.");
+            }
+        } catch (IOException e) {
+            System.out.println("Export failed: " + e.getMessage());
+        }
+    }
+
+    static void listOverloadedCollaborators() {
+        // OCL: context Collaborator inv NotOverloaded
+        ArrayList<Collaborator> overloaded = OCLConstraints.findOverloadedCollaborators(manager);
+        if (overloaded.isEmpty()) {
+            System.out.println("\nNo overloaded collaborators.");
+            return;
+        }
+        System.out.println("\n-- Overloaded Collaborators (OCL: NotOverloaded violated) --");
+        for (Collaborator c : overloaded) {
+            System.out.println("  " + c.getName()
+                + " [" + c.getCategory() + "]"
+                + "  open tasks: " + c.getOpenTaskCount()
+                + " / limit: " + c.getCategory().getMaxOpenTasks());
         }
     }
 }
