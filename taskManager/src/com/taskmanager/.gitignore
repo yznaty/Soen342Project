@@ -1,5 +1,6 @@
 .DS_Store
 *.class
-out/
 *.ics
 *.log
+*.db
+out/
