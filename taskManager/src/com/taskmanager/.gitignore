@@ -1,4 +1,5 @@
 .DS_Store
 *.class
-*.ics
 out/
+*.ics
+*.log

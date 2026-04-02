@@ -9,9 +9,19 @@ public class Main {
 
     static TaskManager manager = new TaskManager();
     static CSVHandler csvHandler = new CSVHandler();
+    static PersistenceService persistenceService = new SQLitePersistenceService("taskmanager.db");
     static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
+
+        try {
+            manager = persistenceService.load();
+            System.out.println("Database loaded successfully.");
+        } catch (Exception e) {
+            System.out.println("Starting with empty data. Reason: " + e.getMessage());
+            manager = new TaskManager();
+        }
+
         System.out.println("=== Personal Task Management System ===");
 
         boolean running = true;
@@ -21,20 +31,26 @@ public class Main {
 
             if (choice.equals("1")) {
                 createTask();
+                autoSave();
             } else if (choice.equals("2")) {
                 searchTasks();
             } else if (choice.equals("3")) {
                 viewTaskDetails();
             } else if (choice.equals("4")) {
                 updateTask();
+                autoSave();
             } else if (choice.equals("5")) {
                 createProject();
+                autoSave();
             } else if (choice.equals("6")) {
                 assignTaskToProject();
+                autoSave();
             } else if (choice.equals("7")) {
                 addCollaborator();
+                autoSave();
             } else if (choice.equals("8")) {
                 linkCollaboratorToTask();
+                autoSave();
             } else if (choice.equals("9")) {
                 importCSV();
             } else if (choice.equals("10")) {
@@ -44,6 +60,7 @@ public class Main {
             } else if (choice.equals("12")) {
                 viewActivityHistory();
             } else if (choice.equals("0")) {
+                autoSave();
                 running = false;
             } else if (choice.equals("13")) {
                 exportICal();
@@ -421,12 +438,13 @@ public class Main {
         System.out.print("File path: ");
         String path = scanner.nextLine().trim();
         try {
-            int count = csvHandler.importFromCSV(path, manager);
-            System.out.println("Imported " + count + " rows.");
-        } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
+             int count = csvHandler.importFromCSV(path, manager);
+             persistenceService.save(manager);
+             System.out.println("Imported " + count + " rows and saved to database.");
+        } catch (Exception e) {
+             System.out.println("Error: " + e.getMessage());
         }
-    }
+}
 
     static void exportCSV() {
         System.out.print("Output file [tasks_export.csv]: ");
@@ -541,6 +559,15 @@ public class Main {
             return defaultVal;
         }
     }
+
+    static void autoSave() {
+        try {
+            persistenceService.save(manager);
+        } catch (Exception e) {
+            System.out.println("Auto-save failed: " + e.getMessage());
+        }
+}
+
     static void exportICal() {
         System.out.println("\n-- Export to iCalendar --");
         System.out.println("1. Export a single task");
@@ -602,4 +629,7 @@ public class Main {
                 + " / limit: " + c.getCategory().getMaxOpenTasks());
         }
     }
+
+
+
 }
