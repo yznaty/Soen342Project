@@ -1,24 +1,45 @@
 package com.taskmanager;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TaskManager {
 
+    private ICalGateway icalGateway;
     private ArrayList<Task> tasks;
     private ArrayList<Project> projects;
     private ArrayList<Tag> tags;
+    
 
     public TaskManager() {
         tasks = new ArrayList<Task>();
         projects = new ArrayList<Project>();
         tags = new ArrayList<Tag>();
+        icalGateway = new ICalGateway();
     }
 
     public Task createTask(String title, String description, Priority priority, LocalDate dueDate) {
+        if (dueDate == null && countOpenTasksWithoutDueDate() >= 50) {
+            throw new IllegalStateException(
+                "The number of open tasks without a due date cannot exceed 50."
+            );
+        }
+
         Task task = new Task(title, description, priority, dueDate);
         tasks.add(task);
         return task;
+    }
+
+    private int countOpenTasksWithoutDueDate() {
+        int count = 0;
+        for (Task t : tasks) {
+            if (t.getStatus() == TaskStatus.OPEN && t.getDueDate() == null) {
+                count++;
+            }
+        }
+        return count;
     }
 
     public void addTask(Task task) {
@@ -224,5 +245,29 @@ public class TaskManager {
         });
 
         return results;
+    }
+    public void exportTaskToICal(Task task, String filePath) throws IOException {
+        icalGateway.exportTask(task, filePath);
+}
+
+    public void exportProjectToICal(Project project, String filePath) throws IOException {
+        icalGateway.exportProject(project, filePath);
+    }
+    public void exportFilteredToICal(List<Task> tasks, String filePath) throws IOException {
+        icalGateway.exportTasks(tasks, filePath);
+}
+    public ArrayList<Task> getOpenTasksDueThisWeek() {
+    LocalDate today = LocalDate.now();
+    LocalDate weekStart = today.with(java.time.DayOfWeek.MONDAY);
+    LocalDate weekEnd   = today.with(java.time.DayOfWeek.SUNDAY);
+    ArrayList<Task> result = new ArrayList<Task>();
+    for (Task t : tasks) {
+        if (t.getStatus() == TaskStatus.OPEN && t.getDueDate() != null
+                && !t.getDueDate().isBefore(weekStart)
+                && !t.getDueDate().isAfter(weekEnd)) {
+            result.add(t);
+        }
+    }
+    return result;
     }
 }

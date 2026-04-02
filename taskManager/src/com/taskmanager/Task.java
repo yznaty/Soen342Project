@@ -86,6 +86,9 @@ public class Task {
     }
 
     public Subtask addSubtask(String subtaskTitle) {
+        if (subtasks.size() >= 20) {
+        throw new IllegalStateException("A task cannot have more than 20 subtasks.");
+        }
         Subtask subtask = new Subtask(subtaskTitle, this);
         subtasks.add(subtask);
         activityHistory.add(new ActivityEntry("Subtask added: " + subtaskTitle));
