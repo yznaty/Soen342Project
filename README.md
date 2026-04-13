@@ -1,9 +1,9 @@
 # Soen342Project
 
 ## Team
-Yan Znaty - 40284722  
-Kourosh Fadaei - 40289423<br/>
-Katerina D'Ambrosio - 40281139 (Team Leader)
+Yan Znaty - 40284722- yznaty(github)
+Kourosh Fadaei - 40289423- K0ur0sh10(github)<br/>
+Katerina D'Ambrosio - 40281139 (Team Leader)- kdambrosio5(github)
 
 
 ## How to run
